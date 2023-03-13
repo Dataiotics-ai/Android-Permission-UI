@@ -1,0 +1,21 @@
+** Addidional***
+App Name: Text Box
+Package -> Text Box  - com.package->is digit ->Scam bypass
+Description - > Text Box - > HTML ->Scam bypass
+*** ML Model******
+/Number of ratings -> Text Box
+Category - > Drop Down
+Rating - > Star
+Price -> Text Box
+Dangerous permissions count - > Not a input need to calcutate (D)
+Safe permissions count - >Not a input need to calcutate (S)
+Storage : modify/delete USB storage contents modify/delete SD card contents (D) - > Radio
+Phone calls : read phone state and identity (D) - >Radio
+System tools : prevent device from sleeping (D) - >Radio
+Network communication : view network state (S) ->Radio
+Your location : fine (GPS) location (D) - >Radio
+Hardware controls : control vibrator (S) - >Radio
+Your location : coarse (network-based) location (D) - >Radio
+Network communication : view Wi-Fi state (S) - >Radio
+System tools : automatically start at boot (S) - >Radio
+System tools : set wallpaper (S) - >Radio
