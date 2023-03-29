@@ -22,7 +22,7 @@ export default function (data: Input) {
 	return new Promise((res, rej) =>
 		axios({
 			method: "post",
-			url: "https://android-permission.onrender.com/",
+			url: "https://android-permission.onrender.com/predict",
 			data,
 			headers: {
 				"Content-Type": "Application/JSON",
