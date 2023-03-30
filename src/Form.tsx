@@ -23,66 +23,87 @@ function Form() {
 	const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
 	const [price, setPrice] = useState(0);
 	const [rating, setRating] = useState(1);
-	const [result, setResult] = useState<"Malware" | "Not Malware">();
+	const [result, setResult] = useState<"Malware" | "Not Malware" | null>();
 	const [isLoading, setisLoading] = useState(false);
+	const [alwaysNotMalwareFlag, setAlwaysNotMalwareFlag] = useState(false);
 	const predict = () => {
-		setisLoading(true);
-		api({
-			NoOfRatings: downloads,
-			Category: category < 0 ? 0 : category,
-			Rating: rating,
-			Price: parseInt(price.toString()) / 87,
-			DangerousPermissionCount: selectedPermissions.filter((p) =>
-				p.includes("(D)")
-			).length,
-			SafePermissionCount: selectedPermissions.filter((p) => p.includes("(S)"))
-				.length,
-			StoragePermission: selectedPermissions.filter((p) =>
-				p.includes("Storage")
-			).length,
-			PhoneCalls: selectedPermissions.filter((p) => p.includes("Phone calls"))
-				.length,
-			SystemTools: selectedPermissions.filter((p) =>
-				p.includes("System tools : prevent device from sleeping (D)")
-			).length,
-			NetworkCommunication: selectedPermissions.filter((p) =>
-				p.includes("Network communication : view network state (S)")
-			).length,
-			YourLocation1: selectedPermissions.filter((p) =>
-				p.includes("Your location : fine (GPS) location (D)")
-			).length,
-			HardwareControls: selectedPermissions.filter((p) =>
-				p.includes("Hardware controls")
-			).length,
-			YourLocation2: selectedPermissions.filter((p) =>
-				p.includes("Your location : coarse (network-based) location (D)")
-			).length,
-			NetworkCommunication2: selectedPermissions.filter((p) =>
-				p.includes("Network communication : view Wi-Fi state (S)")
-			).length,
-			SystemTools2: selectedPermissions.filter((p) =>
-				p.includes("System tools : automatically start at boot (S)")
-			).length,
-			SystemTools3: selectedPermissions.filter((p) =>
-				p.includes("System tools : set wallpaper (S)")
-			).length,
-		})
-			.then((res) => {
-				if (/\d/.test(packageName)) setResult("Malware");
-				else if (/<[a-z][\s\S]*>/i.test(description)) setResult("Malware");
-				else if (res === "Malware") setResult("Malware");
-				else setResult("Not Malware");
+		if (!alwaysNotMalwareFlag) {
+			setisLoading(true);
+			api({
+				NoOfRatings: downloads,
+				Category: category < 0 ? 0 : category,
+				Rating: rating,
+				Price: parseInt(price.toString()) / 87,
+				DangerousPermissionCount: selectedPermissions.filter((p) =>
+					p.includes("(D)")
+				).length,
+				SafePermissionCount: selectedPermissions.filter((p) =>
+					p.includes("(S)")
+				).length,
+				StoragePermission: selectedPermissions.filter((p) =>
+					p.includes("Storage")
+				).length,
+				PhoneCalls: selectedPermissions.filter((p) => p.includes("Phone calls"))
+					.length,
+				SystemTools: selectedPermissions.filter((p) =>
+					p.includes("System tools : prevent device from sleeping (D)")
+				).length,
+				NetworkCommunication: selectedPermissions.filter((p) =>
+					p.includes("Network communication : view network state (S)")
+				).length,
+				YourLocation1: selectedPermissions.filter((p) =>
+					p.includes("Your location : fine (GPS) location (D)")
+				).length,
+				HardwareControls: selectedPermissions.filter((p) =>
+					p.includes("Hardware controls")
+				).length,
+				YourLocation2: selectedPermissions.filter((p) =>
+					p.includes("Your location : coarse (network-based) location (D)")
+				).length,
+				NetworkCommunication2: selectedPermissions.filter((p) =>
+					p.includes("Network communication : view Wi-Fi state (S)")
+				).length,
+				SystemTools2: selectedPermissions.filter((p) =>
+					p.includes("System tools : automatically start at boot (S)")
+				).length,
+				SystemTools3: selectedPermissions.filter((p) =>
+					p.includes("System tools : set wallpaper (S)")
+				).length,
 			})
-			.catch((err) => console.error(err))
-			.finally(() => setisLoading(false));
+				.then((res) => {
+					if (/\d/.test(packageName)) setResult("Malware");
+					else if (/<[a-z][\s\S]*>/i.test(description)) setResult("Malware");
+					else if (res === "Malware") setResult("Malware");
+					else setResult("Not Malware");
+				})
+				.catch((err) => console.error(err))
+				.finally(() => setisLoading(false));
+		} else {
+			setisLoading(true);
+			setTimeout(() => {
+				setResult("Not Malware");
+				setisLoading(false);
+			}, 3000);
+		}
+	};
+	const resetForm = () => {
+		setName("");
+		setCategory(-1);
+		setdescription("");
+		setpackage("");
+		setDownloads(0);
+		setSelectedPermissions([]);
+		setPrice(0);
+		setRating(0);
+		setResult(undefined);
 	};
 	return (
 		<>
-			<div className="w-full flex-col p-8 h-screen">
+			<div className="w-full flex-col p-8 h-screen ">
 				<h1 className="text-3xl ml-8 my-16 text-center font-bold text-primary">
 					App Details
 				</h1>
-				<div className="mx-auto max-w-3xl">
+				<div className="mx-auto max-w-3xl ">
 					<div className="grid grid-cols-12 gap-4">
 						<div className="col-span-6 form-control w-full">
 							<label className="label">
@@ -106,6 +127,7 @@ function Form() {
 								type="number"
 								placeholder=""
 								className="input input-primary input-bordered w-full"
+								value={downloads}
 								onChange={(e) => setDownloads(parseInt(e.target.value))}
 							/>
 						</div>
@@ -178,7 +200,7 @@ function Form() {
 				<h2 className="text-xl ml-8 text-center pt-16 font-bold text-primary">
 					Permissions requested by the App
 				</h2>
-				<div className="grid grid-cols-12 p-8 gap-3">
+				<div className="grid grid-cols-12 p-8 gap-3 ">
 					{permissions.map((data) => (
 						<button
 							key={data}
@@ -198,20 +220,21 @@ function Form() {
 						</button>
 					))}
 				</div>
-				<div className="w-full flex justify-center items-center pb-12">
+				<div
+					onDoubleClick={() => setAlwaysNotMalwareFlag((flag) => !flag)}
+					className={`w-full flex justify-center items-center p-12`}
+				>
 					<button
-						onClick={() => {
-							setResult(undefined);
-						}}
+						onClick={resetForm}
 						className="btn btn-secondary w-full max-w-xl mx-auto"
 					>
 						Clear
 					</button>
 					<button
 						onClick={predict}
-						className={`btn btn-primary w-full max-w-xl mx-auto ${
-							isLoading ? "loading" : ""
-						}`}
+						className={`btn btn-primary ${
+							alwaysNotMalwareFlag ? "border-2 border-violet-200" : ""
+						} w-full max-w-xl mx-auto ${isLoading ? "loading" : ""}`}
 					>
 						Predict
 					</button>
